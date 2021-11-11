@@ -31,5 +31,5 @@ for f in os.listdir(sys.argv[1]):
     #Create JPG Path
     jpgname = os.path.join(sys.argv[2], f) + '.jpg' 
     
-    #plt.savefig(jpgname, bbox_inches='tight', pad_inches = 0) #Saves fig and removes white border
+    plt.savefig(jpgname, bbox_inches='tight', pad_inches = 0) #Saves fig and removes white border
     #plt.imsave(fname=jpgname, arr=data_equalised, cmap='gray', format='jpg')
