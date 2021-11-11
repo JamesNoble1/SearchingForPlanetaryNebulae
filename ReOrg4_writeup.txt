@@ -18,28 +18,32 @@ from astropy.coordinates import SkyCoord
 import shutil
 #########################################
 
-#Usage 
+#Command line usage 
 
-#Reorg.py           Library_of_fits_files          Output_directory_of_sorted_fits     Output of subtracted_fits
+#ReOrg4.py           Library_of_fits_files          Output_directory_of_sorted_fits     Output of subtracted_fits
 #Use Full file paths
 
 #########################################
 
+#Purpose of script
+
+#To match the telescope image file in to pairs.  These pairs will be of the same area of sky (same coordinates) but different wavebands
+#Send these paired files to a subtraction program written by Dr Rhys Morris
+#Output all files to a single directory.  These image files can then be stitched together (using AladinBeta.jar) and viewable on Aladin
+
 #Outline
 
-#Find if filter is r or Ha
-#Find coordinates of images
-#If cordinates are same(to some degree), vphas object is the same and Filter is different, rename files as **filter_Coordinate**
-#Send each filter_Cordinate pair to Resampler
+#Find information about the fits file - VPHAS object, filter type (red or H alpha), coordinates
+#Rename file (for ease of use and sorting) as 'VPHASobject___filtertype___RAcoord___DECdoord'
+#Match the file pairs by sorting by image separation
+#Send each filter_Cordinate pair to subtraction program
 #Compile resampled files to directory
 
 #########################################
 
-#Resampler_quiet must be in same directory
+#the subtraction prgram - Resampler_quiet must be in same directory
  
-#Will need to change SYS.ARGV stuff for unix
-
-
+#Will need to change SYS.ARGV arguments for unix
 
 #####Sorts list by thrid column
 def Sort(sub_li): 
@@ -73,9 +77,6 @@ for f in os.listdir():
     else:
         print('unknown file type')
         sys.exit()
-    
-
-#########Rhys' Code################################## Altered version
 
     print('opening ', filename)
     hdu_list1 = fits.open(filename)
@@ -142,11 +143,7 @@ for f in os.listdir():
         
     print("DEC of image centre is ",dec_whole_image)
     
-    hdu_list1.close()
-
-##############################################################################
-#James' Code   
-
+    hdu_list1.close() 
 
     #Creates file name with vphas object, ra and dec with triple underscore seperation
     f_name = str((Object_name)) + '___' + (filter_name) + '___' + str(format(ra_whole_image, '.5f')) + '___' + str(format(dec_whole_image, '.5f'))
@@ -189,7 +186,7 @@ for f in os.listdir():  #iterate through directory
         format(dec2, '.5f')
         c2 = SkyCoord(ra2, dec2, unit=(u.hourangle, u.deg))
         separation = c1.separation(c2) #find angular separation of the two image centers
-#fi filename are different, separation less than 4000 arcsec, filter different, vphas object the same, then add to list of all possible
+#if filenames are different, separation less than 4000 arcsec, filter different, vphas object the same, then add to list of all possible matches
         if (f_name1 != f_name2) and (separation.arcsecond <= 4000) and (filter1 != filter2) and (Object_name1 == Object_name2): 
             print('matched', f_name1, 'and', f_name2)
             #append details to a list, separation is 3rd column
@@ -199,14 +196,14 @@ for f in os.listdir():  #iterate through directory
 print(Possible_Files)
 print('***************************Sorting in to ascending separation*****************************')
 sub_li = Possible_Files
-Sort(sub_li) #Sorts files by ascending separation, so closest files are matched first
+Sort(sub_li) #Sort list of possible matches by ascending separation, so closest files are matched first
 print(Possible_Files)
 print('********')
 
 sub_li = np.array(sub_li) #make array
 i = 0
 
-#This part send matched pairs to their own subdirectory
+#Send matched pairs to their own subdirectory
 
 Parent_directory = sys.argv[2] #go to output of sorted fits
 for i in range (len(sub_li)):     #iterate through list (closest first) sending matched pairs to a new subdirectory. 
@@ -252,7 +249,7 @@ for i in range (len(sub_li)):     #iterate through list (closest first) sending 
 
 os.chdir(sys.argv[2])
 
-#This part iterate through the sub directories sending the pairs to Rhys' resamplere
+#Iterate through the sub directories sending the pairs to Rhys' subtraction program
 
 Subtracted = sys.argv[3]
 y = list(sys.argv)
@@ -282,10 +279,11 @@ for d in os.listdir():
             #print('r', y[2])
             sys.argv = tuple(y)
             continue
+	
     d_ext = '___.fits'
     d_name = d + d_ext   
     Path3 = os.path.join(Subtracted,d_name) #this ensures correct arguments for resampler
-    y[3] = Path3
+    y[3] = Path3 #Output for subtracted files
 
     if os.path.isfile(Path3+'1'):
         continue
