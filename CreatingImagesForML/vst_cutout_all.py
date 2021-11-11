@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-# Usage
-# ./vst_cutout_1frame.py out1.fits 18 30 36 -31 24 50 50
 
 import matplotlib.pyplot as plt
 from astropy.io import fits
@@ -18,8 +16,14 @@ import csv
 import os
 
 ####################################################################
+#Outline
+#Cycles through subtracted images and checks for PN coordinates within the image
+#Creates a cutout image if any are found
+#This is to build an image database for the machine learning model
+
 #Usage
-#Give CSV of desired coordinates ----- CHANGE 
+#arguments:
+#vst_cutout_all.py, subtracted_fits_files_directory, csv_list_of_PN, Image_output_directory, Image_Size
 ###################################################################
 #cdsys.argv = [0,'G:/Subtracted_Sample','C:/Users/james/OneDrive/Desktop/Project/TruePN.csv', 'G:/Images',500 ] #==Test parameters
 All_PN = []
