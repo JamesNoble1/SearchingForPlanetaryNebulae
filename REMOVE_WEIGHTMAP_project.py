@@ -59,6 +59,7 @@ def check_string():
         
 f_name = [] #Initialise list
 
+#Creates a list of files 
 if len(sys.argv) == 4: #If optional argument included do this
     Parent = os.getcwd() #Get current directory
     file3 = open('FileList.txt', 'w+')    #Create file as writable
@@ -70,12 +71,14 @@ if len(sys.argv) == 4: #If optional argument included do this
 
 string = 'ANCILLARY.WEIGHTMAP' #Unwanted file type
 
-with open(file2, "r") as fp: #Make a list of filenames to be deleted -from readme
+#Make a list of filenames to be deleted -from readme
+with open(file2, "r") as fp: 
     for line in lines_that_contain(string, fp):
         print (line[3:38])
         f_name.append(line[3:38])
 
-if len(sys.argv) == 4: #Add all lines in file3 to a list
+#Add all lines in file3 to a list
+if len(sys.argv) == 4: 
     file3 = open('FileList.txt')
     LINES = file3.readlines()
     for i in LINES:
